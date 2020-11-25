@@ -1,4 +1,6 @@
 # UnicornGymTeam2
+Korea Unicorn Gym(KR) Rount 4 - AWS IoT ppt 실습 완료 후에 다음 작업을 실행해주세요.
+
 raspberrypi에서 다음 명령어 실행해주세요.
 ```
 cd ~
