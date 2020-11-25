@@ -108,10 +108,10 @@ myAWSIoTMQTTClient.configureConnectDisconnectTimeout(10)  # 10 sec
 myAWSIoTMQTTClient.configureMQTTOperationTimeout(5)  # 5 sec
 
 # Connect and subscribe to AWS IoT
-myAWSIoTMQTTClient.connect()
-if args.mode == 'both' or args.mode == 'subscribe':
-    myAWSIoTMQTTClient.subscribe(topic, 1, customCallback)
-time.sleep(2)
+# myAWSIoTMQTTClient.connect()
+# if args.mode == 'both' or args.mode == 'subscribe':
+#     myAWSIoTMQTTClient.subscribe(topic, 1, customCallback)
+# time.sleep(2)
 
 # Get sensor data
 GPIO.setwarnings(False)
@@ -128,6 +128,7 @@ result = adafruit_dht.DHT11(pin = 16)
 # Publish to the same topic in a loop forever
 # loopCount = 0
 while True:
+    myAWSIoTMQTTClient.connect()
     if args.mode == 'both' or args.mode == 'publish':
         
         now = datetime.datetime.now()
@@ -143,4 +144,6 @@ while True:
         if args.mode == 'publish':
             print('Published topic %s: %s\n' % (topic, messageJson))
         # loopCount += 1
+    
+    myAWSIoTMQTTClient.disconnect()
     time.sleep(300)
