@@ -24,6 +24,7 @@ import json
 import RPi.GPIO as GPIO
 import adafruit_dht
 import requests
+import os
 
 AllowedActions = ['both', 'publish', 'subscribe']
 
@@ -47,7 +48,7 @@ parser.add_argument("-w", "--websocket", action="store_true", dest="useWebsocket
                     help="Use MQTT over WebSocket")
 parser.add_argument("-id", "--clientId", action="store", dest="clientId", default="basicPubSub",
                     help="Targeted client id")
-parser.add_argument("-t", "--topic", action="store", dest="topic", default="sdk/test/Python", help="Targeted topic")
+parser.add_argument("-t", "--topic", action="store", dest="topic", default="topic_1", help="Targeted topic")
 parser.add_argument("-m", "--mode", action="store", dest="mode", default="both",
                     help="Operation modes: %s"%str(AllowedActions))
 parser.add_argument("-M", "--message", action="store", dest="message", default="Hello World!",
@@ -122,7 +123,8 @@ url = 'https://extreme-ip-lookup.com/json/'
 r = requests.get(url)
 data = json.loads(r.content.decode())
 result = adafruit_dht.DHT11(pin = 16)
-
+name = os.getenv('MY_NAME')
+print(name)
 
 
 # Publish to the same topic in a loop forever
@@ -134,6 +136,7 @@ while True:
         now = datetime.datetime.now()
         formattedDate = now.strftime('%Y-%m-%dT%H:%M:%S')
         message = {}
+        message['name'] = name
         message['time'] = formattedDate
         message['temp'] = '%-3.1f'%result.temperature
         message['humidity'] = '%-3.1f'%result.humidity
