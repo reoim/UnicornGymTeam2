@@ -130,23 +130,27 @@ print(name)
 # Publish to the same topic in a loop forever
 # loopCount = 0
 while True:
-    myAWSIoTMQTTClient.connect()
-    if args.mode == 'both' or args.mode == 'publish':
+    try:
+        myAWSIoTMQTTClient.connect()
+        if args.mode == 'both' or args.mode == 'publish':
+            
+            now = datetime.datetime.now()
+            formattedDate = now.strftime('%Y-%m-%dT%H:%M:%S')
+            message = {}
+            message['name'] = name
+            message['time'] = formattedDate
+            message['temp'] = '%-3.1f'%result.temperature
+            message['humidity'] = '%-3.1f'%result.humidity
+            message['lon'] = data['lon']
+            message['lat'] = data['lat']
+            messageJson = json.dumps(message)
+            myAWSIoTMQTTClient.publish(topic, messageJson, 1)
+            if args.mode == 'publish':
+                print('Published topic %s: %s\n' % (topic, messageJson))
+            # loopCount += 1
         
-        now = datetime.datetime.now()
-        formattedDate = now.strftime('%Y-%m-%dT%H:%M:%S')
-        message = {}
-        message['name'] = name
-        message['time'] = formattedDate
-        message['temp'] = '%-3.1f'%result.temperature
-        message['humidity'] = '%-3.1f'%result.humidity
-        message['lon'] = data['lon']
-        message['lat'] = data['lat']
-        messageJson = json.dumps(message)
-        myAWSIoTMQTTClient.publish(topic, messageJson, 1)
-        if args.mode == 'publish':
-            print('Published topic %s: %s\n' % (topic, messageJson))
-        # loopCount += 1
-    
-    myAWSIoTMQTTClient.disconnect()
-    time.sleep(300)
+        myAWSIoTMQTTClient.disconnect()
+        time.sleep(300)
+    except Exception as e:
+        print (e)
+        print ('Retry..')
